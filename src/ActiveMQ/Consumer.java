@@ -14,7 +14,6 @@ public class Consumer {
     private static final String USER_NAME=ActiveMQConnection.DEFAULT_USER;
     private static final String USER_PASSWORD=ActiveMQConnection.DEFAULT_PASSWORD;
 
-    AtomicInteger count=new AtomicInteger(0);
     ConnectionFactory connectionFactory;
     Connection connection;
     Session session;
