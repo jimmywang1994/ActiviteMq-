@@ -6,6 +6,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import javax.jms.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+//消息生产者
 public class Producer {
     private static final String BROKEN_URL= ActiveMQConnection.DEFAULT_BROKER_URL;
     private static final String USER_NAME=ActiveMQConnection.DEFAULT_USER;
@@ -15,5 +16,36 @@ public class Producer {
     ConnectionFactory connectionFactory;
     Connection connection;
     Session session;
-    ThreadLocal<Producer> threadLocal=new ThreadLocal<>();
+    ThreadLocal<MessageProducer> threadLocal=new ThreadLocal<>();
+
+    /**
+     * 初始化操作
+     */
+    public void init(){
+       connectionFactory=new ActiveMQConnectionFactory(USER_NAME,USER_PASSWORD,BROKEN_URL);
+        try {
+            //从工厂中创建连接
+            connection=connectionFactory.createConnection();
+            //启动连接
+            connection.start();
+            //创建一个事务
+            session=connection.createSession(true,Session.SESSION_TRANSACTED);
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
+    public void sendMessage(String destName){
+        try {
+            Queue queue=session.createQueue(destName);
+            MessageProducer producer=null;
+            if(threadLocal.get()!=null){
+                producer= threadLocal.get();
+            }else{
+                producer = session.createProducer(queue);
+                threadLocal.set(producer);
+            }
+        } catch (JMSException e) {
+            e.printStackTrace();
+        }
+    }
 }
