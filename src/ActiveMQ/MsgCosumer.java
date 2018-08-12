@@ -16,8 +16,9 @@ public class MsgCosumer implements MessageListener{
         Connection connection=connectionFactory.createConnection();
         connection.start();
         Session session=connection.createSession(false,Session.AUTO_ACKNOWLEDGE);
-        Queue queue=session.createQueue("mq1");
-        MessageConsumer consumer=session.createConsumer(queue);
+        //Queue queue=session.createQueue("mq1");
+        Topic topic=session.createTopic("mq1");
+        MessageConsumer consumer=session.createConsumer(topic);
         MsgCosumer msgCosumer=new MsgCosumer();
         consumer.setMessageListener(msgCosumer);
     }
@@ -25,7 +26,7 @@ public class MsgCosumer implements MessageListener{
     public void onMessage(Message message) {
         TextMessage msg=(TextMessage)message;
         try {
-            System.out.println("我收到了一条消息，消费一条消息"+msg.getText());
+            System.out.println("我通过主题模式收到了一条消息，消费一条消息"+msg.getText());
         } catch (JMSException e) {
             e.printStackTrace();
         }

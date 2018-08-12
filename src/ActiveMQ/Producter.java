@@ -37,12 +37,14 @@ public class Producter {
 
     public void sendMessage(String destName) {
         try {
-            Queue queue = session.createQueue(destName);
+            //Queue queue = session.createQueue(destName);
+            //主题模式
+            Topic topic=session.createTopic("mq1");
             MessageProducer producer = null;
             if (threadLocal.get() != null) {
                 producer = threadLocal.get();
             } else {
-                producer = session.createProducer(queue);
+                producer = session.createProducer(topic);
                 threadLocal.set(producer);
             }
             while (true) {
