@@ -1,11 +1,11 @@
-package MqTest.first_code;
+package MqTest.topic_code;
 
 import MqTest.util.MqUtil;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
 
-public class MqCustomer {
+public class TopicConsumer {
     /**
      * 处理消息.
      */
@@ -27,7 +27,7 @@ public class MqCustomer {
 
             session = connection.createSession(false, Session.CLIENT_ACKNOWLEDGE);
 
-            destination = session.createQueue("dt1");
+            destination = session.createTopic("topic_01");
 
             consumer = session.createConsumer(destination);
             // 超时，连接超时。不是确认超时，是等待多久后，没有消息可处理，超时。
@@ -53,9 +53,6 @@ public class MqCustomer {
                         // acknowledge方法，就是确认方法。代表consumer已经收到消息。 确定后，MQ删除对应的消息。
                         // message.acknowledge();
                         TextMessage om = (TextMessage) message;
-                        if (om != null) {
-                            om.acknowledge();
-                        }
                         String data = om.getText();
                         System.out.println(data);
                     } catch (JMSException e) {
@@ -96,11 +93,10 @@ public class MqCustomer {
                 }
             }
         }
-
     }
 
     public static void main(String[] args) {
-        MqCustomer listener = new MqCustomer();
-        listener.consumMessage();
+        TopicConsumer tConsumer=new TopicConsumer();
+        tConsumer.consumMessage();
     }
 }
